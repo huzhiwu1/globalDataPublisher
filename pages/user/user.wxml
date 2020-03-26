@@ -1,0 +1,9 @@
+<!-- pages/user/user.wxml -->
+<!-- <text>pages/user/user.wxml</text> -->
+<view>
+    <text>name:{{userInfo.name}}</text>
+    <text>age:{{userInfo.age}}</text>
+    <text>job:{{userInfo.job}}</text>
+</view>
+<view bindtap="changeName">改名字为前端小学生</view>
+<view bindtap="changeJob">改职位为前端打杂</view>
