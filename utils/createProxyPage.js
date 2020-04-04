@@ -1,5 +1,5 @@
 function createProxyPage(objProps) {
-  Reflect.set(objProps, 'update', function() {
+  Reflect.set(objProps, 'update', function () {
     console.log('更新');
     const pages = getCurrentPages();
     const page = pages[pages.length - 1];
@@ -8,54 +8,51 @@ function createProxyPage(objProps) {
       const globalData = app.globalDataPublisher.getGlobalData();
       this.globalData = globalData;
       this.setData({
-        ...globalData
+        ...globalData,
       });
     }
   });
-  const proxyPage = new Proxy(
-    objProps,
-
-    {
-      get(target, prop) {
-        if (prop === 'onShow') {
-          Reflect.set(
-            target,
-            prop,
-            new Proxy(target[prop], {
-              apply(target, thisArgument, argumentsList) {
-                const app = getApp();
-                thisArgument.globalData = app.globalDataPublisher.getGlobalData();
-                thisArgument.setData({
-                  ...thisArgument.globalData
-                });
-                console.log('onShow更新数据');
-                return Reflect.apply(target, thisArgument, argumentsList);
-              }
-            })
-          );
-          if (prop === 'onLoad') {
-            Reflect.set(
-              target,
-              prop,
-              new Proxy(target[prop], {
-                apply(target, thisArgument, argumentsList) {
-                  const app = getApp();
-                  app.globalDataPublisher.add(thisArgument);
-                  thisArgument.globalDataPublisher = app.globalDataPublisher;
-                  thisArgument.globalData = app.globalDataPublisher.getGlobalData();
-                  thisArgument.setData({
-                    ...thisArgument.globalData
-                  });
-                  return Reflect.apply(target, thisArgument, argumentsList);
-                }
-              })
-            );
-          }
-        }
-        return Reflect.get(target, prop);
+  const proxyPage = new Proxy(objProps, {
+    get(target, prop) {
+      if (prop === 'onShow') {
+        Reflect.set(
+          target,
+          prop,
+          new Proxy(target[prop], {
+            apply(target, thisArgument, argumentsList) {
+              const app = getApp();
+              thisArgument.globalData = app.globalDataPublisher.getGlobalData();
+              thisArgument.setData({
+                ...thisArgument.globalData,
+              });
+              console.log('onShow更新数据');
+              return Reflect.apply(target, thisArgument, argumentsList);
+            },
+          })
+        );
       }
-    }
-  );
+      if (prop === 'onLoad') {
+        Reflect.set(
+          target,
+          prop,
+          new Proxy(target[prop], {
+            apply(target, thisArgument, argumentsList) {
+              const app = getApp();
+              app.globalDataPublisher.add(thisArgument);
+              thisArgument.globalDataPublisher = app.globalDataPublisher;
+              thisArgument.globalData = app.globalDataPublisher.getGlobalData();
+              thisArgument.setData({
+                ...thisArgument.globalData,
+              });
+              console.log('onLoad执行');
+              return Reflect.apply(target, thisArgument, argumentsList);
+            },
+          })
+        );
+      }
+      return Reflect.get(target, prop);
+    },
+  });
   return proxyPage;
 }
 module.exports.createProxyPage = createProxyPage;
