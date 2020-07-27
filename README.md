@@ -1,3 +1,4 @@
+# 使用发布订阅模式+globalData实现小程序全局实时状态管理
 ## 前言
 
 > 在小程序的中，虽然有globalData这种全局唯一数据存储，但是每个page并不能感知globalData是否发生了变化继而去更新page的data。比如A页面改变了globalData，但是B页面并不能知道globalData改变了，B页面只能在onShow这个生命周期中去重新获取globalData，并setData
