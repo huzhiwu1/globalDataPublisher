@@ -1,3 +1,4 @@
+# 掘金原文 ：https://juejin.im/post/5e7c48a0f265da428d310f52
 # 使用发布订阅模式+globalData实现小程序全局实时状态管理
 ## 前言
 
